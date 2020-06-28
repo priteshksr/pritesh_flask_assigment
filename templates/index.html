@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<header class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar">
+    <button type="submit" id="addstudent" class="btn btn-dark" data-toggle='modal' data-target='#modalAddingForm'>Add Student </button>
+    <button type="submit" id="addclass" data-toggle='modal' data-target='#modalAddingClass' class="btn btn-light">Add Class</button>
+</header>
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">Student Name</th>
+      <th scope="col">Class ID</th>
+      <th scope="col">Created On</th>
+      <th scope="col">Updated On</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody id="students">
+
+  </tbody>
+</table>
+
+<div class="modal fade" id="modalUpdationForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header text-center">
+      <h4 class="modal-title w-100 font-weight-bold">Update Student</h4>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body mx-3">
+      <div class="md-form mb-4">
+        <p style="color:red;" id="msg"></p>
+      </div>
+      <div class="md-form mb-4">
+        <label for="Student ID">Student ID</label>
+        <input type="text" class="form-control" id="updateID" disabled>
+      </div>
+
+      <div class="md-form mb-4">
+        <label for="Student Name">Student Name</label>
+        <input type="text" class="form-control" id="updatename">
+      </div>
+
+      <div class="md-form mb-4">
+        <label for="Class ID">Class ID</label>
+        <input type="number" class="form-control" id="updateclassID" >
+      </div>
+
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+      <button type="button" class="btn btn-dark" id="updatebutton">Update</button>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div class="modal fade" id="modalAddingForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header text-center">
+      <h4 class="modal-title w-100 font-weight-bold">Add Student</h4>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close1">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body mx-3">
+      <div class="md-form mb-4">
+        <p style="color:red;" id="add_msg"></p>
+      </div>
+      <div class="md-form mb-4">
+        <label for="Student Name">Student Name</label>
+        <input type="text" class="form-control" id="addname">
+      </div>
+
+      <div class="md-form mb-4">
+        <label for="Class ID">Class ID</label>
+        <input type="number" class="form-control" id="addclassID" >
+      </div>
+
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+      <button type="button" class="btn btn-dark" id="addbutton">Add Student</button>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+<div class="modal fade" id="modalAddingClass" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header text-center">
+      <h4 class="modal-title w-100 font-weight-bold">Add Class</h4>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close2">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body mx-3">
+      <div class="md-form mb-4">
+        <p style="color:red;" id="add_classmsg"></p>
+      </div>
+      <div class="md-form mb-4">
+        <label for="Student Name">Class Name</label>
+        <input type="text" class="form-control" id="addclassname">
+      </div>
+
+      <div class="md-form mb-4">
+        <label for="Class ID">Class Leader</label>
+        <input type="number" class="form-control" id="addclassleader" >
+      </div>
+
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+      <button type="button" class="btn btn-dark" id="addclassbutton">Add Student</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script type="text/javascript">
+function deletestudent(id){
+  $.ajax({
+     url: '/student?id='+id,
+     type: 'DELETE',
+     success: function(response) {
+       alert(response);
+       window.location.replace("/");
+     },
+     error: function(){
+       alert("error");
+     }
+  });
+}
+function updatestudent(id){
+  $.ajax({
+     url: '/student?id='+id,
+     type: 'GET',
+     success: function(response) {
+       var student = response.student_by_id;
+       $("#updateID").val(student.id);
+       $("#updatename").val(student.name);
+       $("#updateclassID").val(student.class_id);
+     }
+  });
+}
+$("#updatebutton").click(function(){
+  var id = document.getElementById("updateID").value;
+  var name = document.getElementById("updatename").value;
+  var class_id = document.getElementById("updateclassID").value;
+  var jdata = {
+    id,
+    name,
+    class_id};
+  var jjdata = JSON.stringify(jdata);
+  $.ajax({
+      url: '/student',
+      type: 'PUT',
+      contentType:"application/json",
+      data:jjdata,
+     success: function(data, status) {
+       $("#msg").text("Student Record Updated successfully")
+     },
+     error: function(){
+       $("#msg").text("Student Record not Updated")
+     }
+  });
+});
+
+$("#addbutton").click(function(){
+  var name = document.getElementById("addname").value;
+  var class_id = document.getElementById("addclassID").value;
+  var jdata = {
+    name,
+    class_id};
+  var jjdata = JSON.stringify(jdata);
+  $.ajax({
+      url: '/student',
+      type: 'POST',
+      contentType:"application/json",
+      data:jjdata,
+     success: function(data, status) {
+        $("#add_msg").text("Student Record Added successfully")
+     },
+     error: function(){
+        $("#add_msg").text("Student Record not Added")
+     }
+  });
+});
+
+
+$("#addclassbutton").click(function(){
+  var name = document.getElementById("addclassname").value;
+  var class_leader = document.getElementById("addclassleader").value;
+  var jdata = {
+    name,
+    class_leader};
+  var jjdata = JSON.stringify(jdata);
+  $.ajax({
+      url: '/class',
+      type: 'POST',
+      contentType:"application/json",
+      data:jjdata,
+     success: function(data, status) {
+       $("#add_classmsg").text("Student Record Added successfully")
+     },
+     error: function(){
+       $("#add_classmsg").text("Student Record not Added")
+     }
+  });
+});
+
+$("#close").click(function(){
+  window.location.replace("/");
+});
+$("#close1").click(function(){
+  window.location.replace("/");
+});
+$("#close2").click(function(){
+  window.location.replace("/");
+});
+
+
+  $( document ).ready(function() {
+    $.get("student", function(data, status){
+      if(status=='success'){
+        students= data.students;
+        table_body = $("table tbody");
+        $(students).each(function(index, each_student){
+          row = "<tr><td>" + each_student.id + "</td><td>" + each_student.name + "</td><td>" + each_student.class_id + "</td><td>" + each_student.created_on + "</td><td>" + each_student.updated_on + "</td><td> <button type='button' data-toggle='modal' data-target='#modalUpdationForm' onclick='updatestudent("+each_student.id+")' class='btn btn-light'>Update</button> <button type='button' onclick='deletestudent("+each_student.id+")' class='btn btn-light'>Delete</button> </td><tr>";
+          table_body.append(row)
+        });
+      }
+    });
+  });
+
+</script>
+{% endblock %}
