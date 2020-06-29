@@ -1,0 +1,4 @@
+app
+postgres-data
+migrations
+__pychache__

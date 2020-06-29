@@ -1,17 +1,11 @@
 run:
-    ENV DB_USER=postgres
-    ENV DB_PASSWORD=postgres
-    ENV DB_NAME=postgres
-    docker-compose up
+	docker-compose up
+
 test:
-    ENV DB_USER=postgres
-    ENV DB_PASSWORD=postgres
-    ENV DB_NAME=postgres_test
-    docker-compose exec -t app pytest
+	docker-compose up -d
+	docker exec flask_api_1 pytest
 
-migrate:
-    flask db init
-    flask db migrate
+pylint:
+	docker-compose up -d
+	docker exec flask_api_1 pylint --load-plugins pylint_flask_sqlalchemy app.py
 
-pylit:
-    python pylint app.py

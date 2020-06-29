@@ -34,4 +34,4 @@ class TestingConfig(Config):
     CSRF_ENABLED = True
     SECRET_KEY = 'ksfdbcuweducdudncdc'
     #SQLALCHEMY_DATABASE_URI = "postgresql://{}:{}@{}:5432/{}".format(environ.get('DB_USER'), environ.get('DB_PASSWORD'), environ.get('DB_HOST'), environ.get('DB_NAME'))
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:postgres@db:5432/postgres_test"
+    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:postgres@db:5432/postgres"

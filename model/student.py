@@ -1,9 +1,11 @@
-import sys
+"""Module for Student database"""
+
 from .base import db
-import datetime
+
 
 
 class Student(db.Model):
+    """Class for student"""
     __tablename__ = 'student'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -12,10 +14,12 @@ class Student(db.Model):
     updated_on = db.Column(db.DateTime(timezone=True), onupdate=db.func.now())
 
     def __init__(self, name):
+        """constructor function"""
         self.name = name
 
     @property
     def serialize(self):
+        """function to serialize the output"""
         return {
             'id': self.id,
             'name': self.name,

@@ -2,37 +2,35 @@
 
 
 from flask import Flask, request, jsonify, make_response, render_template
-from flask_migrate import Migrate
 from sqlalchemy_utils import database_exists, create_database
 from services import student_services, studentclass_services
 from model.base import db
 
-app = Flask(__name__)
+APP = Flask(__name__)
 
 
 def create_app(config):
     """Creates all configuration for our flask app"""
     # Init app
 
-    app.config.from_object(config)
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    db.init_app(app)
-    #migrate = Migrate(app, db)
-    if not database_exists(app.config['SQLALCHEMY_DATABASE_URI']):
-        create_database(app.config['SQLALCHEMY_DATABASE_URI'])
-    with app.app_context():
+    APP.config.from_object(config)
+    APP.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.init_app(APP)
+    if not database_exists(APP.config['SQLALCHEMY_DATABASE_URI']):
+        create_database(APP.config['SQLALCHEMY_DATABASE_URI'])
+    with APP.app_context():
         db.create_all()
         db.session.commit()
-    return app
+    return APP
 
 
-@app.route('/', methods=['GET'])
+@APP.route('/', methods=['GET'])
 def home():
     """Render Home page for Students"""
     return render_template("index.html")
 
 
-@app.route('/student', methods=['GET'])
+@APP.route('/student', methods=['GET'])
 def student_info():
     """Returns all students and student with specific ID"""
     student_id = request.args.get('id')
@@ -41,7 +39,7 @@ def student_info():
     return student_services.get_all_students()
 
 
-@app.route('/student', methods=['POST'])
+@APP.route('/student', methods=['POST'])
 def student_add():
     """Add Student"""
     if request.content_type.startswith('application/json'):
@@ -57,7 +55,7 @@ def student_add():
     return "Content type not valid"
 
 
-@app.route('/student', methods=['PUT'])
+@APP.route('/student', methods=['PUT'])
 def student_update():
     """Update Student"""
     if request.content_type.startswith('application/json'):
@@ -82,14 +80,14 @@ def student_update():
     return "Content type not valid"
 
 
-@app.route('/student', methods=['DELETE'])
+@APP.route('/student', methods=['DELETE'])
 def student_delete():
     """Delete Student"""
     student_id = request.args.get('id')
     return student_services.delete_student(student_id)
 
 
-@app.route('/class', methods=['GET'])
+@APP.route('/class', methods=['GET'])
 def class_info():
     """Get all the classes and Class by ID"""
     class_id = request.args.get('id')
@@ -98,7 +96,7 @@ def class_info():
     return studentclass_services.get_all_class()
 
 
-@app.route('/class', methods=['POST'])
+@APP.route('/class', methods=['POST'])
 def class_add():
     """Add Class"""
     if request.content_type.startswith('application/json'):
@@ -115,7 +113,7 @@ def class_add():
     return "Content type not valid"
 
 
-@app.route('/class', methods=['PUT'])
+@APP.route('/class', methods=['PUT'])
 def class_update():
     """Update Student"""
     if request.content_type.startswith('application/json'):
@@ -139,14 +137,14 @@ def class_update():
     return "Content type not valid"
 
 
-@app.route('/class', methods=['DELETE'])
+@APP.route('/class', methods=['DELETE'])
 def class_delete():
     """Delete Student"""
     class_id = request.args.get('id')
     return studentclass_services.delete_class(class_id)
 
 
-@app.errorhandler(404)
+@APP.errorhandler(404)
 def not_found():
     """Not FOund page Function"""
     return make_response(jsonify({'error': 'Not found'}), 404)
@@ -154,5 +152,5 @@ def not_found():
 
 # Run Server
 if __name__ == "__main__":
-    app = create_app('config.ProductionConfig')
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    APP = create_app('config.ProductionConfig')
+    APP.run(debug=True, host="0.0.0.0", port=5000)
