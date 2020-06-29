@@ -3,6 +3,13 @@
 wesite is available after running "make run" at http://127.0.0.1:5000/
 
 
+"make run": this command will make docker image and run it
+
+"make test": this command will run all the test cases 
+
+"make pylint": this command will should pylint result
+
+
 
 
 
